@@ -1,18 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace FileDuplicates.Test
 {
     public class CkeckForDuplicatesTest
     {
+        private string? getRootPath()
+        {
+            string rootPath = null;
+            var fullPath = Directory.GetCurrentDirectory().Split('\\');
+            foreach (var diractory in fullPath)
+            {
+                if (diractory == "bin")
+                    break;
+                rootPath += diractory + "\\";
+            }
+            return rootPath;
+        }
+
         [Fact]
         public void CompileCandidatesWithSizeShouldReturnOneDuplicate()
         {
-            string Path = @"F:\Dev\Schleupen SE\FileDuplicates.Test\NewFolder";
+            var rootPath=getRootPath();
+            var path = Path.Combine(@rootPath, "NewFolder");
+            
             CheckForDuplicates test=new CheckForDuplicates();
 
-            var result=test.Compile_candidates(Path,CompareModes.Size);
+            var result=test.Compile_candidates(path, CompareModes.Size);
 
             Assert.Equal(1, result.Count);
         }
@@ -20,10 +36,12 @@ namespace FileDuplicates.Test
         [Fact]
         public void CompileCandidatesWithSizeAndNameshouldReturnOneDuplicate()
         {
-            string Path = @"F:\Dev\Schleupen SE\FileDuplicates.Test\NewFolder";
+            var rootPath = getRootPath();
+            var path = Path.Combine(@rootPath, "NewFolder");
+
             CheckForDuplicates test = new CheckForDuplicates();
 
-            var result = test.Compile_candidates(Path);
+            var result = test.Compile_candidates(path);
 
             Assert.Equal(1, result.Count);
         }
@@ -31,10 +49,12 @@ namespace FileDuplicates.Test
         [Fact]
         public void CompileCandidatesWithSizeAndNameshouldReturnZeroDuplicate()
         {
-            string Path = @"F:\Dev\Schleupen SE\FileDuplicates.Test\NewFolder\NewFolder";
+            var rootPath = getRootPath();
+            var path = Path.Combine(@rootPath, "NewFolder\\NewFolder");
+
             CheckForDuplicates test = new CheckForDuplicates();
 
-            var result = test.Compile_candidates(Path);
+            var result = test.Compile_candidates(path);
             
             Assert.Equal(0, result.Count);
         }
@@ -51,9 +71,11 @@ namespace FileDuplicates.Test
         [Fact]
         public void Check_candidatesTest()
         {
-            string Path = @"F:\Dev\Schleupen SE\FileDuplicates.Test\NewFolder";
+            var rootPath = getRootPath();
+            var path = Path.Combine(@rootPath, "NewFolder");
+
             CheckForDuplicates test = new CheckForDuplicates();
-            var candidates = test.Compile_candidates(Path);
+            var candidates = test.Compile_candidates(path);
 
             var result = test.Check_candidates(candidates);
             List<IDuplicates> listofFilePath = new List<IDuplicates>();
@@ -68,9 +90,11 @@ namespace FileDuplicates.Test
         [Fact]
         public void Check_candidatesNotSameHashTest()
         {
-            string Path = @"F:\Dev\Schleupen SE\FileDuplicates.Test\NewFolder\NewFolder";
+            var rootPath = getRootPath();
+            var path = Path.Combine(@rootPath, "NewFolder\\NewFolder");
+
             CheckForDuplicates test = new CheckForDuplicates();
-            var candidates = test.Compile_candidates(Path);
+            var candidates = test.Compile_candidates(path);
 
             var result = test.Check_candidates(candidates);
 
